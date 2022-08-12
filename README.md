@@ -18,3 +18,9 @@ $ pipenv install
 $ pipenv shell
 $ pipenv install pygame
 ```
+
+### Running the game
+
+```powershell
+$ python main.py
+```
