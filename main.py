@@ -19,7 +19,10 @@ ground_surface: pygame.Surface = pygame.image.load('graphics/ground.png').conver
 text_surface: pygame.Surface = test_font.render('My game', False, 'Black')
 
 snail_surface: pygame.Surface = pygame.image.load('graphics/snail/snail1.png').convert_alpha()
-snail_x_pos: int = 600
+snail_rect: pygame.Rect = snail_surface.get_rect(midbottom=(600, 300))
+
+player_surface: pygame.Surface = pygame.image.load('graphics/player/player_walk_1.png').convert_alpha()
+player_rect: pygame.Rect = player_surface.get_rect(midbottom=(80, 300))
 
 while True:
     # draw all our elements
@@ -40,10 +43,13 @@ while True:
     screen.blit(ground_surface, (0, 300))
     screen.blit(text_surface, (300, 50))
 
-    snail_x_pos -= 4
-    if snail_x_pos < -100:
-        snail_x_pos = 800
-    screen.blit(snail_surface, (snail_x_pos, 250))
+    snail_rect.x -= 4
+    if snail_rect.right < 0:
+        snail_rect.left = 800
+    screen.blit(snail_surface, snail_rect)
+
+    player_rect.left += 1
+    screen.blit(player_surface, player_rect)
 
     # updates the created display surface
     pygame.display.update()
