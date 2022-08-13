@@ -26,6 +26,8 @@ snail_rect: pygame.Rect = snail_surface.get_rect(midbottom=(600, 300))
 player_surface: pygame.Surface = pygame.image.load('graphics/player/player_walk_1.png').convert_alpha()
 player_rect: pygame.Rect = player_surface.get_rect(midbottom=(80, 300))
 
+player_gravity: int = 0
+
 while True:
     # draw all our elements
     # update everything
@@ -39,11 +41,21 @@ while True:
             # exiting the program
             exit()
 
+        # player jumps if we clicked on it
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            # print(event.pos)
+            if player_rect.collidepoint(event.pos):
+                player_gravity = -20
+
+        # player jumps if K_SPACE is pressed
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_SPACE:
-                print('jump')
+                # print('jump')
+                player_gravity = -20
+        
         if event.type == pygame.KEYUP:
-            print('key up')
+            # print('key up')
+            pass
 
     # block image transfer, display the image surface
     # draw order is important!
@@ -59,7 +71,9 @@ while True:
         snail_rect.left = 800
     screen.blit(snail_surface, snail_rect)
 
-    player_rect.left += 1
+    # Player
+    player_gravity += 1
+    player_rect.y += player_gravity
     screen.blit(player_surface, player_rect)
 
     # keyboard input
