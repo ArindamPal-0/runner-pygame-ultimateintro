@@ -44,18 +44,16 @@ while True:
         # player jumps if we clicked on it
         if event.type == pygame.MOUSEBUTTONDOWN:
             # print(event.pos)
-            if player_rect.collidepoint(event.pos):
+            # only jump if player touching the ground
+            if player_rect.collidepoint(event.pos) and player_rect.bottom == 300:
                 player_gravity = -20
 
         # player jumps if K_SPACE is pressed
         if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_SPACE:
+            # only jump if player touching the ground
+            if event.key == pygame.K_SPACE and player_rect.bottom == 300:
                 # print('jump')
                 player_gravity = -20
-        
-        if event.type == pygame.KEYUP:
-            # print('key up')
-            pass
 
     # block image transfer, display the image surface
     # draw order is important!
@@ -72,25 +70,17 @@ while True:
     screen.blit(snail_surface, snail_rect)
 
     # Player
-    player_gravity += 1
-    player_rect.y += player_gravity
+
+    if player_rect.bottom > 300:
+        player_rect.bottom = 300
+        player_gravity = 0
+    elif player_rect.bottom != 300 or player_gravity != 0:
+            player_gravity += 1
+            player_rect.bottom += player_gravity
+    
+
+
     screen.blit(player_surface, player_rect)
-
-    # keyboard input
-    # keys = pygame.key.get_pressed()
-    # if keys[pygame.K_SPACE]:
-    #     print('jump')
-
-    # collision check
-    # if player_rect.colliderect(snail_rect):
-    #     print('collision')
-
-    # collision of a point (mouse pos) with rectangle (player)
-    mouse_pos = pygame.mouse.get_pos()
-    if player_rect.collidepoint(mouse_pos):
-        # print('collision')
-        if pygame.mouse.get_pressed()[0]:
-            print('pressed')
 
     # updates the created display surface
     pygame.display.update()
