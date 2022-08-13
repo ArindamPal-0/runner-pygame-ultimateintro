@@ -1,4 +1,4 @@
-# The Ultimate Introduction to Pygame
+# Runner - The Ultimate Introduction to Pygame
 
 ### Clear Code
 
