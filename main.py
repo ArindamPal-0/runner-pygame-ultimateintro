@@ -39,18 +39,11 @@ while True:
             # exiting the program
             exit()
 
-        if event.type == pygame.MOUSEMOTION:
-            # print(event.pos)
-
-            # check if the mouse is over the player rectangle
-            if player_rect.collidepoint(event.pos):
-                print('mouse over player')
-
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            print('mouse down')
-
-        if event.type == pygame.MOUSEBUTTONUP:
-            print('mouse up')
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_SPACE:
+                print('jump')
+        if event.type == pygame.KEYUP:
+            print('key up')
 
     # block image transfer, display the image surface
     # draw order is important!
@@ -61,9 +54,6 @@ while True:
     # pygame.draw.rect(screen, '#c0e8ec', score_rect)
     screen.blit(score_surface, score_rect)
 
-    # draw a line
-    pygame.draw.line(screen, 'Red', (0, 0), (800, 400), 5)
-
     snail_rect.x -= 4
     if snail_rect.right < 0:
         snail_rect.left = 800
@@ -71,6 +61,11 @@ while True:
 
     player_rect.left += 1
     screen.blit(player_surface, player_rect)
+
+    # keyboard input
+    # keys = pygame.key.get_pressed()
+    # if keys[pygame.K_SPACE]:
+    #     print('jump')
 
     # collision check
     # if player_rect.colliderect(snail_rect):
