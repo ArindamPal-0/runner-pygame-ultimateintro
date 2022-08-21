@@ -11,6 +11,8 @@ pygame.display.set_caption("Runner")
 
 clock = pygame.time.Clock()
 
+game_active: bool = True
+
 # font
 test_font = pygame.font.Font('font/Pixeltype.ttf', 50)
 
@@ -41,49 +43,64 @@ while True:
             # exiting the program
             exit()
 
-        # player jumps if we clicked on it
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            # print(event.pos)
-            # only jump if player touching the ground
-            if player_rect.collidepoint(event.pos) and player_rect.bottom == 300:
-                player_gravity = -20
+        if game_active:
+            # player jumps if we clicked on it
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                # print(event.pos)
+                # only jump if player touching the ground
+                if player_rect.collidepoint(event.pos) and player_rect.bottom == 300:
+                    player_gravity = -20
 
-        # player jumps if K_SPACE is pressed
-        if event.type == pygame.KEYDOWN:
-            # only jump if player touching the ground
-            if event.key == pygame.K_SPACE and player_rect.bottom == 300:
-                # print('jump')
-                player_gravity = -20
+            # player jumps if K_SPACE is pressed
+            if event.type == pygame.KEYDOWN:
+                # only jump if player touching the ground
+                if event.key == pygame.K_SPACE and player_rect.bottom == 300:
+                    # print('jump')
+                    player_gravity = -20
+            
+        else:
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
+                game_active = True
+                snail_rect.left = 800
 
-    # block image transfer, display the image surface
-    # draw order is important!
-    screen.blit(sky_surface, (0, 0))
-    screen.blit(ground_surface, (0, 300))
+    if game_active:
+        # block image transfer, display the image surface
+        # draw order is important!
+        screen.blit(sky_surface, (0, 0))
+        screen.blit(ground_surface, (0, 300))
 
-    pygame.draw.rect(screen, '#c0e8ec', score_rect, 20)
-    # pygame.draw.rect(screen, '#c0e8ec', score_rect)
-    screen.blit(score_surface, score_rect)
+        pygame.draw.rect(screen, '#c0e8ec', score_rect, 20)
+        # pygame.draw.rect(screen, '#c0e8ec', score_rect)
+        screen.blit(score_surface, score_rect)
 
-    snail_rect.x -= 4
-    if snail_rect.right < 0:
-        snail_rect.left = 800
-    screen.blit(snail_surface, snail_rect)
+        snail_rect.x -= 4
+        if snail_rect.right < 0:
+            snail_rect.left = 800
+        screen.blit(snail_surface, snail_rect)
 
-    # Player
+        # Player
 
-    if player_rect.bottom > 300:
-        player_rect.bottom = 300
-        player_gravity = 0
-    elif player_rect.bottom != 300 or player_gravity != 0:
-            player_gravity += 1
-            player_rect.bottom += player_gravity
+        if player_rect.bottom > 300:
+            player_rect.bottom = 300
+            player_gravity = 0
+        elif player_rect.bottom != 300 or player_gravity != 0:
+                player_gravity += 1
+                player_rect.bottom += player_gravity
+        
+        screen.blit(player_surface, player_rect)
+
+        # collision
+        if snail_rect.colliderect(player_rect):
+            game_active = False
     
-
-
-    screen.blit(player_surface, player_rect)
+    else:
+        screen.fill('Yellow')
 
     # updates the created display surface
     pygame.display.update()
+
+
+
 
     # makes sure that the while loop doesn't run at more than 60 times per second
     clock.tick(60)

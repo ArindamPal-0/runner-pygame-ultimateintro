@@ -10,7 +10,19 @@ youtube tutorial github link:
 
 <br>
 
+## Setup
+
 ### Dev Setup (windows)
+
+creating virtual environment and installing dependencies.
+
+```powershell
+$ mkdir .venv
+$ pipenv install --dev
+$ pipenv shell
+```
+
+dev setup from scratch.
 
 ```powershell
 $ mkdir .venv
