@@ -1,6 +1,17 @@
 import pygame
 from sys import exit
 
+def display_score():
+    # get the curren time as ticks
+    current_time = ((pygame.time.get_ticks() // 1000) - start_time)
+
+    # creating the score surface with the current time tick
+    score_surface = test_font.render(f'Score: {current_time}', False,  (64, 64, 64))
+    # getting the score rect and positioning it
+    score_rect = score_surface.get_rect(center = (400, 50))
+    # rendering the score surface on the screen
+    screen.blit(score_surface, score_rect)
+
 # very important to initialize the pygame module
 pygame.init()
 
@@ -13,14 +24,16 @@ clock = pygame.time.Clock()
 
 game_active: bool = True
 
+start_time: int = 0
+
 # font
 test_font = pygame.font.Font('font/Pixeltype.ttf', 50)
 
 sky_surface: pygame.Surface = pygame.image.load('graphics/Sky.png').convert()
 ground_surface: pygame.Surface = pygame.image.load('graphics/ground.png').convert()
 
-score_surface: pygame.Surface = test_font.render('My game', False, (64, 64, 64))
-score_rect: pygame.Rect = score_surface.get_rect(center=(400, 50))
+# score_surface: pygame.Surface = test_font.render('My game', False, (64, 64, 64))
+# score_rect: pygame.Rect = score_surface.get_rect(center=(400, 50))
 
 snail_surface: pygame.Surface = pygame.image.load('graphics/snail/snail1.png').convert_alpha()
 snail_rect: pygame.Rect = snail_surface.get_rect(midbottom=(600, 300))
@@ -62,6 +75,7 @@ while True:
             if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
                 game_active = True
                 snail_rect.left = 800
+                start_time = (pygame.time.get_ticks() // 1000)
 
     if game_active:
         # block image transfer, display the image surface
@@ -69,9 +83,11 @@ while True:
         screen.blit(sky_surface, (0, 0))
         screen.blit(ground_surface, (0, 300))
 
-        pygame.draw.rect(screen, '#c0e8ec', score_rect, 20)
+        # draw score surface
+        # pygame.draw.rect(screen, '#c0e8ec', score_rect, 20)
         # pygame.draw.rect(screen, '#c0e8ec', score_rect)
-        screen.blit(score_surface, score_rect)
+        # screen.blit(score_surface, score_rect)
+        display_score()
 
         snail_rect.x -= 4
         if snail_rect.right < 0:
