@@ -12,6 +12,8 @@ def display_score():
     # rendering the score surface on the screen
     screen.blit(score_surface, score_rect)
 
+    return current_time
+
 # very important to initialize the pygame module
 pygame.init()
 
@@ -22,9 +24,11 @@ pygame.display.set_caption("Runner")
 
 clock = pygame.time.Clock()
 
-game_active: bool = True
+game_active: bool = False
 
 start_time: int = 0
+
+score: int = 0
 
 # font
 test_font = pygame.font.Font('font/Pixeltype.ttf', 50)
@@ -42,6 +46,20 @@ player_surface: pygame.Surface = pygame.image.load('graphics/player/player_walk_
 player_rect: pygame.Rect = player_surface.get_rect(midbottom=(80, 300))
 
 player_gravity: int = 0
+
+# Intro screen
+# importing the image
+player_stand: pygame.Surface = pygame.image.load('graphics/player/player_stand.png').convert_alpha()
+# scale the image surface
+# player_stand = pygame.transform.scale2x(player_stand)
+player_stand = pygame.transform.rotozoom(player_stand, 0, 2)
+player_stand_rect: pygame.Rect = player_stand.get_rect(center = (400, 200))
+
+game_name: pygame.Surface = test_font.render("Pixel Runner", False, (111, 196, 169))
+game_name_rect: pygame.Rect = game_name.get_rect(center = (400, 80))
+
+game_message: pygame.Surface = test_font.render('Press space to run', False, (111, 196, 169))
+game_message_rect: pygame.Rect = game_message.get_rect(center = (400, 340))
 
 while True:
     # draw all our elements
@@ -87,7 +105,7 @@ while True:
         # pygame.draw.rect(screen, '#c0e8ec', score_rect, 20)
         # pygame.draw.rect(screen, '#c0e8ec', score_rect)
         # screen.blit(score_surface, score_rect)
-        display_score()
+        score = display_score()
 
         snail_rect.x -= 4
         if snail_rect.right < 0:
@@ -110,7 +128,18 @@ while True:
             game_active = False
     
     else:
-        screen.fill('Yellow')
+        screen.fill((94, 129, 162))
+        screen.blit(player_stand, player_stand_rect)
+
+        score_message: pygame.Surface = test_font.render(f"Your score: {score}", False, (111, 196, 169))
+        score_message_rect: pygame.Rect = score_message.get_rect(center = (400, 330))
+
+        screen.blit(game_name, game_name_rect)
+
+        if score == 0:
+            screen.blit(game_message, game_message_rect)
+        else:
+            screen.blit(score_message, score_message_rect)
 
     # updates the created display surface
     pygame.display.update()
