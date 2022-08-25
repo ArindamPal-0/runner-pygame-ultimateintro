@@ -17,11 +17,15 @@ class Player(pygame.sprite.Sprite):
         self.rect: pygame.Rect = self.image.get_rect(midbottom = (80, 300))
         self.gravity: int = 0
 
+        self.jump_sound = pygame.mixer.Sound('audio/jump.mp3')
+        self.jump_sound.set_volume(0.01)
+
     def player_input(self) -> None:
         """Checking for player input for character movement."""
         keys = pygame.key.get_pressed()
         if keys[pygame.K_SPACE] and self.rect.bottom >= 300:
             self.gravity = -20
+            self.jump_sound.play()
 
     def apply_gravity(self) -> None:
         """Applying gravity to the character, and checks for player above ground."""
@@ -129,11 +133,18 @@ def main() -> int:
 
     clock = pygame.time.Clock()
 
+    # game active state
     game_active: bool = False
 
     start_time: int = 0
 
+    # current score
     score: int = 0
+
+    # background music
+    bg_music = pygame.mixer.Sound("audio/music.wav")
+    bg_music.set_volume(0.01)
+    bg_music.play(loops=-1)
 
     # Groups
     player = pygame.sprite.GroupSingle()
