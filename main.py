@@ -37,6 +37,21 @@ def collisions(player: pygame.Rect, obstacles: list[pygame.Rect]) -> bool:
             return True
     return False
 
+def player_animation(player_rect: pygame.Rect, player_index: float, player_walk: list[pygame.Surface], player_jump: pygame.Surface) -> tuple[float, pygame.Surface]:
+    """Player walking animation walk, jump and their transition."""
+
+    player_surface: pygame.Surface = None
+
+    if player_rect.bottom < 300:
+        player_surface = player_jump
+    else:
+        player_index += 0.1
+        if player_index >= len(player_walk):
+            player_index = 0
+        player_surface = player_walk[int(player_index)]
+    
+    return player_index, player_surface
+
 # main function
 def main() -> int:
     """Main function which runs when the program is executed, returns 0 if exits successfully"""
@@ -68,13 +83,29 @@ def main() -> int:
 
     # Obstacles
 
-    snail_surface: pygame.Surface = pygame.image.load('graphics/snail/snail1.png').convert_alpha()
+    # Snail
+    snail_frame_1: pygame.Surface = pygame.image.load('graphics/snail/snail1.png').convert_alpha()
+    snail_frame_2: pygame.Surface = pygame.image.load('graphics/snail/snail2.png').convert_alpha()
+    snail_frames: list[pygame.Surface] = [snail_frame_1, snail_frame_2]
+    snail_frame_index: float = 0
+    snail_surface: pygame.Surface = snail_frames[snail_frame_index]
 
-    fly_surface: pygame.Suface = pygame.image.load('graphics/fly/fly1.png').convert_alpha()
+    # Fly
+    fly_frame_1: pygame.Suface = pygame.image.load('graphics/fly/fly1.png').convert_alpha()
+    fly_frame_2: pygame.Suface = pygame.image.load('graphics/fly/fly2.png').convert_alpha()
+    fly_frames: list[pygame.Surface] = [fly_frame_1, fly_frame_2]
+    fly_frame_index: float = 0
+    fly_surface: pygame.Surface = fly_frames[fly_frame_index]
 
     obstacle_rect_list: list[pygame.Rect] = []
 
-    player_surface: pygame.Surface = pygame.image.load('graphics/player/player_walk_1.png').convert_alpha()
+    player_walk_1: pygame.Surface = pygame.image.load('graphics/player/player_walk_1.png').convert_alpha()
+    player_walk_2: pygame.Surface = pygame.image.load('graphics/player/player_walk_2.png').convert_alpha()
+    player_walk: list[pygame.Surface] = [player_walk_1, player_walk_2]
+    player_index: float = 0
+    player_jump: pygame.Surface = pygame.image.load('graphics/player/jump.png').convert_alpha()
+
+    player_surface: pygame.Surface = player_walk[int(player_index)]
     player_rect: pygame.Rect = player_surface.get_rect(midbottom=(80, 300))
 
     player_gravity: int = 0
@@ -98,6 +129,12 @@ def main() -> int:
     obstacle_timer: int = pygame.USEREVENT + 1
     pygame.time.set_timer(obstacle_timer, 1500)
 
+    snail_animation_timer = pygame.USEREVENT + 2
+    pygame.time.set_timer(snail_animation_timer, 400)
+
+    fly_animation_timer = pygame.USEREVENT + 3
+    pygame.time.set_timer(fly_animation_timer, 200)
+
     while True:
         # draw all our elements
         # update everything
@@ -108,8 +145,8 @@ def main() -> int:
             if event.type == pygame.QUIT:
                 # quiting pygame
                 pygame.quit()
-                # exiting the program
-                exit()
+                # Returning from the main function and exiting
+                return 0
 
             if game_active:
                 # player jumps if we clicked on it
@@ -131,12 +168,30 @@ def main() -> int:
                     game_active = True
                     start_time = (pygame.time.get_ticks() // 1000)
             
-            if event.type == obstacle_timer and game_active:
-                # adding obstacle whenever custom event is fired
-                if randint(0, 2):
-                    obstacle_rect_list.append(snail_surface.get_rect(bottomright=(randint(900, 1100), 300)))
-                else:
-                    obstacle_rect_list.append(fly_surface.get_rect(bottomright=(randint(900, 1100), 210)))
+            # run all timers if game is active
+            if game_active:
+                if event.type == obstacle_timer and game_active:
+                    # adding obstacle whenever custom event is fired
+                    if randint(0, 2):
+                        obstacle_rect_list.append(snail_surface.get_rect(bottomright=(randint(900, 1100), 300)))
+                    else:
+                        obstacle_rect_list.append(fly_surface.get_rect(bottomright=(randint(900, 1100), 210)))
+                
+                if event.type == snail_animation_timer:
+                    if snail_frame_index == 0:
+                        snail_frame_index = 1
+                    else:
+                        snail_frame_index = 0
+                    snail_surface = snail_frames[snail_frame_index]
+
+                if event.type == fly_animation_timer:
+                    if fly_frame_index == 0:
+                        fly_frame_index = 1
+                    else:
+                        fly_frame_index = 0
+                    fly_surface = fly_frames[fly_frame_index]
+
+                
 
         if game_active:
             # block image transfer, display the image surface
@@ -164,6 +219,7 @@ def main() -> int:
                     player_gravity += 1
                     player_rect.bottom += player_gravity
             
+            player_index, player_surface = player_animation(player_rect, player_index, player_walk, player_jump)
             screen.blit(player_surface, player_rect)
 
             # Obstacles movement
@@ -205,8 +261,7 @@ def main() -> int:
         # makes sure that the while loop doesn't run at more than 60 times per second
         clock.tick(60)
     
-    return 0
-
+    return 1
 
 
 if __name__ == '__main__':
